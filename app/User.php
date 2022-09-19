@@ -10,8 +10,7 @@ use Auth;
 use App\Http\Models\Tenant;
 use marcusvbda\vstack\Models\Scopes\TenantScope;
 use marcusvbda\vstack\Models\Observers\TenantObserver;
-use App\Http\Models\Pivots\{UserPolo};
-use App\Http\Models\{Department, Module, UserNotification, Polo};
+use App\Http\Models\{UserNotification};
 use App\Http\Models\Scopes\{OrderByScope};
 use marcusvbda\vstack\Hashids;
 
@@ -21,7 +20,7 @@ class User extends Authenticatable
 	// , HasRoles;
 	public $guarded = ['created_at'];
 	protected $dates = ['deleted_at'];
-	protected $appends = ['code', 'polo_ids'];
+	protected $appends = ['code'];
 	protected $hashPassword = false;
 	public  $casts = [
 		"data" => "json",
@@ -72,21 +71,6 @@ class User extends Authenticatable
 	public function tenant()
 	{
 		return $this->BelongsTo(Tenant::class);
-	}
-
-	public function polos()
-	{
-		return $this->belongsToMany(Polo::class, UserPolo::class, "user_id", "polo_id");
-	}
-
-	public function getPoloIdsAttribute()
-	{
-		return $this->polos->pluck("id")->toArray();
-	}
-
-	public function polo()
-	{
-		return $this->belongsTo(Polo::class);
 	}
 
 	public function department()

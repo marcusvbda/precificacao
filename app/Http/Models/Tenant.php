@@ -36,23 +36,6 @@ class Tenant extends DefaultModel
 		return $this->hasMany(User::class);
 	}
 
-	public function polos()
-	{
-		return $this->hasMany(Polo::class);
-	}
-
-	public function getDefaultRatingRulesAttribute()
-	{
-		return [
-			"Possui Nome Completo" => floatval(15),
-			"Possui Email" => floatval(20),
-			"Possui Telefone Fixo" => floatval(10),
-			"Possui Telefone Celular" => floatval(20),
-			"Possui Interesse" => floatval(10),
-			"Convertido Anteriormente" => floatval(10)
-		];
-	}
-
 	public function tenantNotifications()
 	{
 		return $this->hasMany(UserNotification::class, "tenant_id");

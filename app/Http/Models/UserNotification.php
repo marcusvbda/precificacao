@@ -34,11 +34,6 @@ class UserNotification extends Model
 		return $this->belongsTo(Tenant::class);
 	}
 
-	public function polo()
-	{
-		return $this->belongsTo(Polo::class);
-	}
-
 	public function scopeIsNew($query)
 	{
 		return $query->where('read_at', null);

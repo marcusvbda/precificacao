@@ -16,7 +16,7 @@ class SuperAdminAccessModel extends DefaultModel
 		static::addGlobalScope(new OrderByScope(with(new static)->getTable()));
 
 		if (Auth::check()) {
-			if (!Auth::user()->hasRole(["super-admin", "callcenter"])) {
+			if (!Auth::user()->hasRole(["super-admin"])) {
 				static::observe(new TenantObserver());
 				static::addGlobalScope(new TenantScope());
 			}

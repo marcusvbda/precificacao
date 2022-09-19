@@ -11,7 +11,6 @@ class Module extends DefaultModel
 
 	public $casts = [
 		"new_badge" => "boolean",
-		"polo_ids" => "array"
 	];
 
 	public static function boot()

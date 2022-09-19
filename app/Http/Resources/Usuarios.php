@@ -6,9 +6,6 @@ namespace App\Http\Resources;
 use App\Http\Controllers\Auth\UsersController;
 use marcusvbda\vstack\Resource;
 use Auth;
-use App\Http\Filters\Users\UsersByTenant;
-use App\Http\Models\Department;
-use App\Http\Models\Role;
 use App\Http\Models\Tenant;
 use App\Http\Models\UserInvite;
 use marcusvbda\vstack\Fields\BelongsTo;
@@ -60,11 +57,7 @@ class Usuarios extends Resource
 		$columns["code"] = ["label" => "Código", "sortable_index" => "id"];
 		$columns["name"] = ["label" => "Nome"];
 		$columns["email"] = ["label" => "E-mail"];
-		$columns["qty_polos"] = ["label" => "Polos Vinculados", "sortable" => false, "handler" => function ($row) {
-			return $row->polos()->count();
-		}];
 		$columns["role_name"] = ["label" => "Grupo de Acesso", "sortable" => false];
-		$columns["department->name"] = ["label" => "Departamento", "sortable" => false];
 		return $columns;
 	}
 
@@ -127,11 +120,6 @@ class Usuarios extends Resource
 				"label" => "Tenant",
 				"field" => "tenant_id",
 				"model" => Tenant::class
-			]);
-			$filters[] = new FilterByOption([
-				"label" => "Departamento",
-				"field" => "department_id",
-				"model" => Department::class
 			]);
 		}
 		return $filters;
@@ -210,19 +198,6 @@ class Usuarios extends Resource
 				"required" => true,
 				"options" => $this->getRoleOptions()
 			]),
-			new BelongsTo([
-				"label" => "Polos",
-				"field" => "polo_ids",
-				"description" => "Polos os quais este usuário faz parte",
-				"multiple" => true,
-				"options" => $user->tenant->polos()->select("id as id", "name as value")->get()
-			]),
-			new BelongsTo([
-				"label" => "Departamento",
-				"field" => "department_id",
-				"required" => false,
-				"model" => Department::class
-			]),
 		];
 		$cards[] = new Card("Informações", $fields);
 		return $cards;
@@ -257,23 +232,6 @@ class Usuarios extends Resource
 				"label" => "Nome",
 				"field" => "name",
 				"required" => true,
-			]),
-			new BelongsTo([
-				"label" => "Polos",
-				"field" => "polo_ids",
-				"description" => "Polos os quais este usuário faz parte",
-				"multiple" => true,
-				"default" => array_map(function ($row) {
-					return strval($row);
-				}, $content ? $content->polos()->pluck("id")->toArray() : []),
-				"options" => $user->tenant->polos()->select("id as id", "name as value")->get(),
-				"all_options_label" => "Todos os Polos"
-			]),
-			new BelongsTo([
-				"label" => "Departamento",
-				"field" => "department_id",
-				"required" => false,
-				"model" => Department::class,
 			]),
 		];
 		$block_edit_role = @request("content") && @request("content")->id == @$user->id;
@@ -310,12 +268,9 @@ class Usuarios extends Resource
 			return ["success" => true, "route" => $route];
 		}
 		$user = User::findOrFail($id);
-		$user->fill(request()->except(["role_id", "polo_ids"]));
+		$user->fill(request()->all());
 		$user->save();
-		if (@$data["data"]["role_id"]) {
-			$user->syncRoles([Role::findOrFail($data["data"]["role_id"])]);
-		}
-		$user->polos()->sync(@$data["data"]["polo_ids"] ? $data["data"]["polo_ids"] : []);
+
 		if (request("clicked_btn") == "save") {
 			$route = route('resource.edit', ["resource" => $this->id, "code" => $user->code]);
 		} else {

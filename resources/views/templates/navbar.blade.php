@@ -59,8 +59,6 @@ $email_integrator = getEnabledModuleToUser("email-integrator");
                         class="sr-only">(current)</span></a>
             </li>
         </ul>
-        <notification-bell class="sm-hide" :active='@json(currentClass([' /admin/notificacoes/*']))'>
-        </notification-bell>
         <ul class="navbar-nav">
             <li class="nav-item dropdown hover-color ml-0">
                 <a class="nav-link dropdown-toggle py-0 d-flex flex-row align-items-center" href="#" id="navbarDropdown"

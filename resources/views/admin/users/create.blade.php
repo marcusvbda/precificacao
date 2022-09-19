@@ -25,7 +25,6 @@
     </div>
 </div>
 <makeuser-invite 
-    :polos='@json(\App\Http\Models\Polo::get())'
     :roles='@json($roles)'
 >
 </makeuser-invite>
