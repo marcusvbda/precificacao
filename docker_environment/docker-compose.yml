@@ -1,0 +1,58 @@
+version: '3'
+name: 'precificacao-environment'
+
+services:
+  traefik:
+    restart: unless-stopped
+    container_name: traefik-precificacao
+    image: traefik:latest
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "8080:8080"
+    networks:
+      - web
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  mysql:
+    container_name: mysql-precificacao
+    image: 'mysql:8.0.29'
+    tty: true
+    restart: unless-stopped
+    networks:
+      - web
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: ""
+    volumes:
+      - ./mysql/entrypoint:/docker-entrypoint-initdb.d
+
+  admin:
+    container_name: admin-precificacao
+    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    networks:
+      - web
+    environment:
+      XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+      XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+    volumes:
+      - '../:/var/www/html'
+    depends_on:
+      - traefik
+      - mysql
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web"
+      - "traefik.http.routers.precificacao.rule=Host(`precificacao.local`)"
+      - "traefik.http.services.precificacao.loadbalancer.server.port=80"
+
+networks:
+  web:
+    external: true
