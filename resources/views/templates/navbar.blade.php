@@ -79,9 +79,6 @@ $email_integrator = getEnabledModuleToUser("email-integrator");
                         href="/admin/usuarios">Usuários</a>
                     @if ($is_admin_or_super_admin)
                     <a class="dropdown-item" href="/admin/modulos">Modulos</a>
-                    @if($is_super_admin)
-                    <a class="dropdown-item" href="/admin/log-viewer">Log Viewer</a>
-                    @endif
                     @endif
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="/login">Sair</a>

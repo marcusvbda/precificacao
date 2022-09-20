@@ -12,9 +12,6 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::group(['prefix' => "admin"], function () {
 		require "partials/home.php";
 		require "partials/users.php";
-		Route::group(['middleware' => ['root-auth']], function () {
-			Route::get('log-viewer', [LogViewerController::class, 'index']);
-		});
 	});
 });
 
