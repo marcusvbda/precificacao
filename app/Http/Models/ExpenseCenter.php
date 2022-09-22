@@ -14,4 +14,9 @@ class ExpenseCenter extends DefaultModel
         parent::boot();
         static::addGlobalScope(new OrderByScope(with(new static)->getTable()));
     }
+
+    public function expenses()
+    {
+        return $this->belongsToMany(Expense::class, "product_expense_centers", "expense_center_id", "expense_id");
+    }
 }

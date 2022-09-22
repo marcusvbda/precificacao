@@ -4,8 +4,11 @@ namespace App\Http\Resources;
 
 use marcusvbda\vstack\Resource;
 use App\Http\Models\ExpenseCenter;
+use marcusvbda\vstack\Fields\Card;
+use marcusvbda\vstack\Fields\ResourceTree;
+use marcusvbda\vstack\Fields\Text;
 
-class CentroDeCustos extends Resource
+class CentrosDeCusto extends Resource
 {
 	public $model = ExpenseCenter::class;
 
@@ -84,34 +87,27 @@ class CentroDeCustos extends Resource
 		return false;
 	}
 
+	public function fields()
+	{
+		$fields[] = new Text([
+			"label" => "Nome",
+			"field" => "name",
+			"description" => "Para identificação do centro de custo",
+			"required" => true,
+			"rules" => "max:255"
+		]);
+		$cards[] = new Card("Informações Básicas", $fields);
 
-	// public function fields()
-	// {
-	// 	$fields[] = new Text([
-	// 		"label" => "Nome",
-	// 		"field" => "name",
-	// 		"description" => "Para identificação do módulo",
-	// 		"required" => true,
-	// 		"rules" => "max:255"
-	// 	]);
-	// 	$fields[] = new Text([
-	// 		"label" => "Slug",
-	// 		"field" => "slug",
-	// 		"description" => "Para identificação do módulo",
-	// 		"required" => true,
-	// 		"rules" => "max:255"
-	// 	]);
-	// 	$cards[] = new Card("Informações Básicas", $fields);
+		$fields = [];
+		$fields[] = new ResourceTree([
+			'parent_resource' => 'centros-de-custo',
+			'resource' => 'despesas',
+			'relation' => 'expenses',
+			'foreign_key' => 'expense_center_id',
+			'label_index' => 'name',
+		]);
+		$cards[] = new Card("Configurações", $fields);
 
-	// 	$fields = [];
-	// 	$fields[] = new Check([
-	// 		"label" => "habilitar cartão de 'Novo'",
-	// 		"field" => "new_badge",
-	// 		"default" => true,
-	// 		"required" => true
-	// 	]);
-	// 	$cards[] = new Card("Configurações", $fields);
-
-	// 	return $cards;
-	// }
+		return $cards;
+	}
 }

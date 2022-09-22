@@ -4,6 +4,10 @@ namespace App\Http\Resources;
 
 use marcusvbda\vstack\Resource;
 use App\Http\Models\Expense;
+use marcusvbda\vstack\Fields\BelongsTo;
+use marcusvbda\vstack\Fields\Card;
+use marcusvbda\vstack\Fields\Radio;
+use marcusvbda\vstack\Fields\Text;
 
 class Despesas extends Resource
 {
@@ -34,15 +38,15 @@ class Despesas extends Resource
 		return ["name"];
 	}
 
-	// public function table()
-	// {
-	// 	$columns = [];
-	// 	$columns["code"] = ["label" => "Código", "sortable_index" => "id"];
-	// 	$columns["name"] = ["label" => "Nome"];
-	// 	$columns["f_new_badge"] = ["label" => "Mostrar cartão de 'novo'", "sortable_index" => "mew_badge"];
-	// 	$columns["f_created_at_badge"] = ["label" => "Data", "sortable_index" => "created_at"];
-	// 	return $columns;
-	// }
+	public function table()
+	{
+		$columns = [];
+		$columns["code"] = ["label" => "Código", "sortable_index" => "id"];
+		$columns["name"] = ["label" => "Nome"];
+		$columns["f_value"] = ["label" => "Valor", "sortable_index" => "value"];
+		$columns["f_created_at_badge"] = ["label" => "Data", "sortable_index" => "created_at"];
+		return $columns;
+	}
 
 	public function canClone()
 	{
@@ -85,33 +89,38 @@ class Despesas extends Resource
 	}
 
 
-	// public function fields()
-	// {
-	// 	$fields[] = new Text([
-	// 		"label" => "Nome",
-	// 		"field" => "name",
-	// 		"description" => "Para identificação do módulo",
-	// 		"required" => true,
-	// 		"rules" => "max:255"
-	// 	]);
-	// 	$fields[] = new Text([
-	// 		"label" => "Slug",
-	// 		"field" => "slug",
-	// 		"description" => "Para identificação do módulo",
-	// 		"required" => true,
-	// 		"rules" => "max:255"
-	// 	]);
-	// 	$cards[] = new Card("Informações Básicas", $fields);
+	public function fields()
+	{
+		$fields[] = new Text([
+			"label" => "Nome",
+			"field" => "name",
+			"description" => "Para identificação da despesa",
+			"rules" => ["required", "max:255"]
+		]);
 
-	// 	$fields = [];
-	// 	$fields[] = new Check([
-	// 		"label" => "habilitar cartão de 'Novo'",
-	// 		"field" => "new_badge",
-	// 		"default" => true,
-	// 		"required" => true
-	// 	]);
-	// 	$cards[] = new Card("Configurações", $fields);
+		$cards[] = new Card("Informações Básicas", $fields);
 
-	// 	return $cards;
-	// }
+		$fields = [];
+		$fields[] = new Radio([
+			"label" => "Tipo",
+			"field" => "type",
+			"description" => "Tipo de calculo",
+			"default" => "fixed",
+			"rules" => ["required"],
+			"options" => [
+				["value" => "fixed", "label" => "Valor Fixo"],
+				["value" => "percentage", "label" => "Porcentagem"],
+			]
+		]);
+		$fields[] = new Text([
+			"label" => "Valor",
+			"type" => "number",
+			"step" => .01,
+			"field" => "value",
+			"rules" => ["required"],
+		]);
+		$cards[] = new Card("Configurações", $fields);
+
+		return $cards;
+	}
 }

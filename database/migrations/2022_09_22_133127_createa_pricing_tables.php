@@ -52,7 +52,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string("name");
             $table->string("type");
-            $table->integer("value");
+            $table->decimal("value");
             $table->unsignedBigInteger('tenant_id');
             $table->foreign('tenant_id')
                 ->references('id')
@@ -124,10 +124,10 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('expense_centers_expenses');
-        Schema::dropIfExists('expense_centers');
         Schema::dropIfExists('expenses');
         Schema::dropIfExists('product_marketplaces');
         Schema::dropIfExists('product_expense_centers');
+        Schema::dropIfExists('expense_centers');
         Schema::dropIfExists('marketplaces');
         Schema::dropIfExists('products');
     }

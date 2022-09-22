@@ -93,7 +93,7 @@ $email_integrator = getEnabledModuleToUser("email-integrator");
                 </li>
             @endCanViewList
             @canViewList('Despesas')
-                <li class="nav-item dropdown {{ currentClass(['/admin/despesas/*']) }}">
+                <li class="nav-item dropdown {{ currentClass(['/admin/despesas/*','/admin/centros-de-custo/*']) }}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="el-icon-price-tag mr-2"></i>
@@ -106,9 +106,9 @@ $email_integrator = getEnabledModuleToUser("email-integrator");
                             Despesas
                         </a>
                         @endCanViewList
-                        @canViewList('CentroDeCustos')
-                        <a class="{{ getMenuClass('viewlist-expenses', ['/admin/centro-de-custos/*']) }}"
-                            href="/admin/centro-de-custos">
+                        @canViewList('CentrosDeCusto')
+                        <a class="{{ getMenuClass('viewlist-expenses', ['/admin/centros-de-custo/*']) }}"
+                            href="/admin/centros-de-custo">
                             Centro de Custos
                         </a>
                         @endCanViewList

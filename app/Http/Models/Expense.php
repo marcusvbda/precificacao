@@ -14,4 +14,13 @@ class Expense extends DefaultModel
         parent::boot();
         static::addGlobalScope(new OrderByScope(with(new static)->getTable()));
     }
+
+    public function getFValueAttribute()
+    {
+        $value = $this->value;
+        if ($this->type == "percentage") {
+            return $value . " %";
+        }
+        return "R$ " . $value;
+    }
 }
