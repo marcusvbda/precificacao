@@ -55,9 +55,66 @@ $email_integrator = getEnabledModuleToUser("email-integrator");
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item {{ currentClass(['/admin']) }}">
-                <a class="nav-link" href="/"><i class="el-icon-s-home mr-2"></i>Página Inicial<span
+                <a class="nav-link" href="/"><i class="el-icon-house mr-2"></i>Página Inicial<span
                         class="sr-only">(current)</span></a>
             </li>
+            @canViewList('Produtos')
+                <li class="nav-item dropdown {{ currentClass(['/admin/produtos/*']) }}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="el-icon-brush mr-2"></i>
+                        Produtos
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        @canViewList('Produtos')
+                        <a class="{{ getMenuClass('viewlist-produtos', ['/admin/produtos/*']) }}"
+                            href="/admin/produtos">
+                            Produtos
+                        </a>
+                        @endCanViewList
+                    </div>
+                </li>
+            @endCanViewList
+            @canViewList('Marketplaces')
+                <li class="nav-item dropdown {{ currentClass(['/admin/marketplaces/*']) }}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="el-icon-collection-tag mr-2"></i>
+                        Marketplaces
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        @canViewList('Marketplaces')
+                        <a class="{{ getMenuClass('viewlist-marketplaces', ['/admin/marketplaces/*']) }}"
+                            href="/admin/marketplaces">
+                            Marketplaces
+                        </a>
+                        @endCanViewList
+                    </div>
+                </li>
+            @endCanViewList
+            @canViewList('Despesas')
+                <li class="nav-item dropdown {{ currentClass(['/admin/despesas/*']) }}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="el-icon-price-tag mr-2"></i>
+                        Despesas
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        @canViewList('Despesas')
+                        <a class="{{ getMenuClass('viewlist-marketplaces', ['/admin/despesas/*']) }}"
+                            href="/admin/despesas">
+                            Despesas
+                        </a>
+                        @endCanViewList
+                        @canViewList('CentroDeCustos')
+                        <a class="{{ getMenuClass('viewlist-expenses', ['/admin/centro-de-custos/*']) }}"
+                            href="/admin/centro-de-custos">
+                            Centro de Custos
+                        </a>
+                        @endCanViewList
+                    </div>
+                </li>
+            @endCanViewList
         </ul>
         <ul class="navbar-nav">
             <li class="nav-item dropdown hover-color ml-0">
