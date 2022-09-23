@@ -1,7 +1,7 @@
 <template>
     <tr>
         <td colspan="2">
-            <div class="row mb-3" v-for="(row,i) in options" :key="i" v-if="visible" v-loading="loading"
+            <div class="row mb-3" v-for="(row,i) in selected_options" :key="i" v-if="visible" v-loading="loading"
                 element-loading-text="Carregando ...">
                 <div class="col-12">
                     <h4 class='mb-3'>{{row.name}}</h4>
@@ -24,7 +24,10 @@
                 </div>
             </div>
             <div class="row mt-3">
-                <div class="d-flex justify-content-end align-items-end col-12 flex-column">
+                <div class="col-md-6 col-sm-12">
+                    <VueApexCharts type="treemap" height="500" width="500" :options="chartOptions" :series="series" />
+                </div>
+                <div class="d-flex justify-content-start align-items-end col-md-6 col-sm-12 flex-column">
                     <h4><b class="mr-2">Preço calculado : </b>{{computed_price.currency()}}</h4>
                     <h4><b class="mr-2 text-success">Preço sugerido : </b>{{suggested_price.currency()}}</h4>
                 </div>
@@ -33,7 +36,7 @@
     </tr>
 </template>
 <script>
-
+import VueApexCharts from 'vue-apexcharts'
 export default {
     props: ["form"],
     data() {
@@ -41,34 +44,74 @@ export default {
             loading: true,
             timeout: null,
             options: [],
+            chartOptions: {
+                legend: {
+                    show: false
+                },
+                chart: {
+                    type: 'treemap'
+                },
+                title: {
+                    text: 'Gráfico de proporção'
+                },
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        fontSize: '12px',
+                    },
+                    offsetY: -4
+                }
+            },
         }
     },
+    components: {
+        VueApexCharts
+    },
     computed: {
+        series() {
+            let data = [];
+            for (let i in this.selected_options) {
+                let options = this.selected_options[i];
+                for (let y in options.expenses) {
+                    let expense = options.expenses[y];
+                    data.push({ x: expense.name, y: expense.value })
+                }
+            }
+
+            data.push({ x: "Margem", y: this.margin_real_value })
+            return [{ data }]
+        },
+        selected_options() {
+            return this.options.filter(x => this.expense_center_ids.includes(parseInt(x.id)) || this.expense_center_ids.includes(String(x.id)))
+        },
         expense_center_ids() {
             return this.form?.expense_center_ids ? this.form.expense_center_ids : [];
         },
         visible() {
             return this.expense_center_ids.length;
         },
+        margin_real_value() {
+            if (this.form.margin_type == "fixed") {
+                return Number(this.form.margin);
+            } else {
+                return (Number(this.form.base_price) * Number(this.form.margin)) / 100;
+            }
+        },
         suggested_price() {
             let price = Number(this.computed_price);
-            if (this.form.margin_type == "fixed") {
-                price += Number(this.form.margin);
-            } else {
-                price += (this.form.base_price * this.form.margin) / 100;
-            }
+            price += this.margin_real_value;
             return (isNaN(price) ? 0 : price);
         },
         computed_price() {
-            let price = this.form.base_price;
-            for (let i in this.options) {
-                let options = this.options[i];
+            let price = Number(this.form.base_price);
+            for (let i in this.selected_options) {
+                let options = this.selected_options[i];
                 for (let y in options.expenses) {
                     let expense = options.expenses[y];
                     if (expense.type == "fixed") {
-                        price -= expense.value;
+                        price += Number(expense.value);
                     } else {
-                        price -= (this.form.base_price * expense.value) / 100;
+                        price += (Number(this.form.base_price) * Number(expense.value)) / 100;
                     }
                 }
             }
