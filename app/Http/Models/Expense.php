@@ -9,10 +9,20 @@ class Expense extends DefaultModel
 {
     protected $table = "expenses";
 
+    public $appends = ["f_value", "f_type"];
+
     public static function boot()
     {
         parent::boot();
         static::addGlobalScope(new OrderByScope(with(new static)->getTable()));
+    }
+
+    public function getFTypeAttribute()
+    {
+        if ($this->type == "percentage") {
+            return "Porcentagem";
+        }
+        return "Valor Fixo";
     }
 
     public function getFValueAttribute()

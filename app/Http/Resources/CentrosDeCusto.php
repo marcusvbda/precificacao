@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Models\Expense;
 use marcusvbda\vstack\Resource;
 use App\Http\Models\ExpenseCenter;
+use marcusvbda\vstack\Fields\BelongsTo;
 use marcusvbda\vstack\Fields\Card;
-use marcusvbda\vstack\Fields\ResourceTree;
+use marcusvbda\vstack\Fields\CustomComponent;
 use marcusvbda\vstack\Fields\Text;
 
 class CentrosDeCusto extends Resource
@@ -37,15 +39,14 @@ class CentrosDeCusto extends Resource
 		return ["name"];
 	}
 
-	// public function table()
-	// {
-	// 	$columns = [];
-	// 	$columns["code"] = ["label" => "Código", "sortable_index" => "id"];
-	// 	$columns["name"] = ["label" => "Nome"];
-	// 	$columns["f_new_badge"] = ["label" => "Mostrar cartão de 'novo'", "sortable_index" => "mew_badge"];
-	// 	$columns["f_created_at_badge"] = ["label" => "Data", "sortable_index" => "created_at"];
-	// 	return $columns;
-	// }
+	public function table()
+	{
+		$columns = [];
+		$columns["code"] = ["label" => "Código", "sortable_index" => "id"];
+		$columns["name"] = ["label" => "Nome"];
+		$columns["f_created_at_badge"] = ["label" => "Data", "sortable_index" => "created_at"];
+		return $columns;
+	}
 
 	public function canClone()
 	{
@@ -99,15 +100,31 @@ class CentrosDeCusto extends Resource
 		$cards[] = new Card("Informações Básicas", $fields);
 
 		$fields = [];
-		$fields[] = new ResourceTree([
-			'parent_resource' => 'centros-de-custo',
-			'resource' => 'despesas',
-			'relation' => 'expenses',
-			'foreign_key' => 'expense_center_id',
-			'label_index' => 'name',
+		$fields[] = new BelongsTo([
+			'label' => 'Despesas',
+			'description' => 'Despesas que deseja relacionar a este centro de custo',
+			'field' => 'expense_ids',
+			'multiple' => true,
+			'model' => Expense::class
 		]);
+
+		$fields[] = new CustomComponent("<expense-preview :form='form'></expense-preview>");
 		$cards[] = new Card("Configurações", $fields);
 
 		return $cards;
+	}
+
+	public function storeMethod($id, $data)
+	{
+		$expense_ids = data_get($data, "data.expense_ids", []);
+		if (isset($data["data"]["expense_ids"])) {
+			unset($data["data"]["expense_ids"]);
+		}
+		$result = parent::storeMethod($id, $data);
+
+		$model = data_get($result, "model");
+		$model->expenses()->sync($expense_ids);
+
+		return $result;
 	}
 }

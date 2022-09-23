@@ -14,4 +14,14 @@ class Product extends DefaultModel
 		parent::boot();
 		static::addGlobalScope(new OrderByScope(with(new static)->getTable()));
 	}
+
+	public function expenseCenter()
+	{
+		return $this->belongsToMany(ExpenseCenter::class, "product_expense_centers", "product_id", "expense_center_id");
+	}
+
+	public function getExpenseCenterIdsAttribute()
+	{
+		return $this->expenseCenter()->pluck("id")->ToArray();
+	}
 }

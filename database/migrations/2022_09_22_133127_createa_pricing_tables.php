@@ -31,15 +31,15 @@ return new class extends Migration
         });
 
         Schema::create('expense_centers_expenses', function (Blueprint $table) {
-            $table->unsignedBigInteger('expenses_id');
-            $table->foreign('expenses_id')
+            $table->unsignedBigInteger('expense_id');
+            $table->foreign('expense_id')
                 ->references('id')
                 ->on('expenses');
             $table->unsignedBigInteger('expense_center_id');
             $table->foreign('expense_center_id')
                 ->references('id')
                 ->on('expense_centers');
-            $table->primary(['expenses_id', 'expense_center_id']);
+            $table->primary(['expense_id', 'expense_center_id']);
         });
     }
 
@@ -88,6 +88,9 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string("name");
             $table->string("ean");
+            $table->decimal("base_price")->default(0);
+            $table->string("margin_type");
+            $table->decimal("margin")->default(0);
             $table->unsignedBigInteger('tenant_id');
             $table->foreign('tenant_id')
                 ->references('id')
@@ -113,11 +116,11 @@ return new class extends Migration
             $table->foreign('expense_center_id')
                 ->references('id')
                 ->on('expense_centers');
-            $table->unsignedBigInteger('tenant_id');
-            $table->foreign('tenant_id')
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')
                 ->references('id')
-                ->on('tenants');
-            $table->primary(['tenant_id', 'expense_center_id']);
+                ->on('products');
+            $table->primary(['product_id', 'expense_center_id']);
         });
     }
 
