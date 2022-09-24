@@ -17,7 +17,7 @@ class ExpenseCenter extends DefaultModel
 
     public function expenses()
     {
-        return $this->belongsToMany(Expense::class, "expense_centers_expenses", "expense_center_id", "expense_id");
+        return $this->hasMany(Expense::class, "expense_center_id");
     }
 
     public function getExpenseIdsAttribute()

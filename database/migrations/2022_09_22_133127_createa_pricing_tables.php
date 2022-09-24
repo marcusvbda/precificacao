@@ -9,8 +9,8 @@ return new class extends Migration
     public function up()
     {
         $this->createMarketplaces();
-        $this->createExpenses();
         $this->createExpenseCenters();
+        $this->createExpenses();
         $this->createProducts();
     }
 
@@ -29,18 +29,6 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
-
-        Schema::create('expense_centers_expenses', function (Blueprint $table) {
-            $table->unsignedBigInteger('expense_id');
-            $table->foreign('expense_id')
-                ->references('id')
-                ->on('expenses');
-            $table->unsignedBigInteger('expense_center_id');
-            $table->foreign('expense_center_id')
-                ->references('id')
-                ->on('expense_centers');
-            $table->primary(['expense_id', 'expense_center_id']);
-        });
     }
 
     private function createExpenses()
@@ -53,6 +41,10 @@ return new class extends Migration
             $table->string("name");
             $table->string("type");
             $table->decimal("value");
+            $table->unsignedBigInteger('expense_center_id');
+            $table->foreign('expense_center_id')
+                ->references('id')
+                ->on('expense_centers');
             $table->unsignedBigInteger('tenant_id');
             $table->foreign('tenant_id')
                 ->references('id')
@@ -126,11 +118,10 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('expense_centers_expenses');
-        Schema::dropIfExists('expenses');
         Schema::dropIfExists('product_marketplaces');
         Schema::dropIfExists('product_expense_centers');
         Schema::dropIfExists('expense_centers');
+        Schema::dropIfExists('expenses');
         Schema::dropIfExists('marketplaces');
         Schema::dropIfExists('products');
     }

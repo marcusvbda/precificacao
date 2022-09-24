@@ -100,12 +100,6 @@ $email_integrator = getEnabledModuleToUser("email-integrator");
                         Despesas
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        @canViewList('Despesas')
-                        <a class="{{ getMenuClass('viewlist-marketplaces', ['/admin/despesas/*']) }}"
-                            href="/admin/despesas">
-                            Despesas
-                        </a>
-                        @endCanViewList
                         @canViewList('CentrosDeCusto')
                         <a class="{{ getMenuClass('viewlist-expenses', ['/admin/centros-de-custo/*']) }}"
                             href="/admin/centros-de-custo">

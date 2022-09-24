@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use marcusvbda\vstack\Resource;
 use App\Http\Models\Expense;
-use marcusvbda\vstack\Fields\BelongsTo;
 use marcusvbda\vstack\Fields\Card;
 use marcusvbda\vstack\Fields\Radio;
 use marcusvbda\vstack\Fields\Text;
@@ -28,24 +27,9 @@ class Despesas extends Resource
 		return "Despesa";
 	}
 
-	public function icon()
-	{
-		return "el-icon-price-tag";
-	}
-
 	public function search()
 	{
 		return ["name"];
-	}
-
-	public function table()
-	{
-		$columns = [];
-		$columns["code"] = ["label" => "Código", "sortable_index" => "id"];
-		$columns["name"] = ["label" => "Nome"];
-		$columns["f_value"] = ["label" => "Valor", "sortable_index" => "value"];
-		$columns["f_created_at_badge"] = ["label" => "Data", "sortable_index" => "created_at"];
-		return $columns;
 	}
 
 	public function canClone()
@@ -55,17 +39,17 @@ class Despesas extends Resource
 
 	public function canCreate()
 	{
-		return hasPermissionTo("create-expenses");
+		return request()->input_origin == 'resource-tree';
 	}
 
 	public function canUpdate()
 	{
-		return hasPermissionTo("edit-expenses");
+		return request()->input_origin == 'resource-tree';
 	}
 
 	public function canDelete()
 	{
-		return hasPermissionTo("destroy-expenses");
+		return request()->input_origin == 'resource-tree';
 	}
 
 	public function canImport()
@@ -80,7 +64,7 @@ class Despesas extends Resource
 
 	public function canViewList()
 	{
-		return hasPermissionTo("viewlist-expenses");
+		return request()->input_origin == 'resource-tree';
 	}
 
 	public function canView()

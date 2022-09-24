@@ -17,12 +17,7 @@ return [
             ["viewlist-marketplaces", "Ver Lista de Marketplaces"],
             ["create-marketplaces", "Criar Marketplaces"],
             ["edit-marketplaces", "Editar Marketplaces"],
-            ["destroy-marketplaces", "Excluir Marketplaces"],
-
-            ["viewlist-expenses", "Ver Lista de Despesas"],
-            ["create-expenses", "Criar Despesas"],
-            ["edit-expenses", "Editar Despesas"],
-            ["destroy-expenses", "Excluir Despesas"],
+            ["destroy-marketplaces", "Excluir Marketplaces"]
         ]
     ],
     "admin" => [
@@ -36,12 +31,7 @@ return [
             ["viewlist-marketplaces", "Ver Lista de Marketplaces"],
             ["create-marketplaces", "Criar Marketplaces"],
             ["edit-marketplaces", "Editar Marketplaces"],
-            ["destroy-marketplaces", "Excluir Marketplaces"],
-
-            ["viewlist-expenses", "Ver Lista de Despesas"],
-            ["create-expenses", "Criar Despesas"],
-            ["edit-expenses", "Editar Despesas"],
-            ["destroy-expenses", "Excluir Despesas"],
+            ["destroy-marketplaces", "Excluir Marketplaces"]
         ]
     ]
 ];

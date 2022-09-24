@@ -8,6 +8,7 @@ use App\Http\Models\ExpenseCenter;
 use marcusvbda\vstack\Fields\BelongsTo;
 use marcusvbda\vstack\Fields\Card;
 use marcusvbda\vstack\Fields\CustomComponent;
+use marcusvbda\vstack\Fields\ResourceTree;
 use marcusvbda\vstack\Fields\Text;
 
 class CentrosDeCusto extends Resource
@@ -100,31 +101,55 @@ class CentrosDeCusto extends Resource
 		$cards[] = new Card("Informações Básicas", $fields);
 
 		$fields = [];
-		$fields[] = new BelongsTo([
-			'label' => 'Despesas',
-			'description' => 'Despesas que deseja relacionar a este centro de custo',
-			'field' => 'expense_ids',
-			'multiple' => true,
-			'model' => Expense::class
-		]);
-
-		$fields[] = new CustomComponent("<expense-preview :form='form'></expense-preview>");
+		if (request()->page_type == "create") {
+			$fields[] = $this->getFieldAlert(["description" => "Para ter acesso a edição de despesas, finalize o cadastro deste centro de custo."]);
+		} else {
+			$fields[] = new ResourceTree([
+				'parent_resource' => 'centros-de-custo',
+				'resource' => 'despesas',
+				'relation' => 'expenses',
+				'foreign_key' => 'expense_center_id',
+				'template' => '<expense-title-label></expense-title-label>'
+			]);
+		}
 		$cards[] = new Card("Configurações", $fields);
 
 		return $cards;
 	}
 
-	public function storeMethod($id, $data)
+	private function getFieldAlert($options)
 	{
-		$expense_ids = data_get($data, "data.expense_ids", []);
-		if (isset($data["data"]["expense_ids"])) {
-			unset($data["data"]["expense_ids"]);
-		}
-		$result = parent::storeMethod($id, $data);
+		$title = data_get($options, "title", "Atenção !!");
+		$type = data_get($options, "type", "warning");
+		$description = data_get($options, "description");
+		$alert = '<el-alert
+                        type="' . $type . '"
+                        show-icon
+                        :closable="false"
+                    >
+                        <div>
+                            <b>' . $title . '</b>
+                        </div>
+                        <div>' . $description . '</div>
+                    </el-alert>';
+		return new CustomComponent(str_replace("{type}", $type, $alert));
+	}
 
-		$model = data_get($result, "model");
-		$model->expenses()->sync($expense_ids);
+	public function secondCrudBtn()
+	{
+		return [
+			"size" => "small",
+			"field" => "save",
+			"type" => "success",
+			"content" => "<div class='d-flex flex-row'>
+							<i class='el-icon-success mr-2'></i>
+							Salvar
+						</div>"
+		];
+	}
 
-		return $result;
+	public function firstCrudBtn()
+	{
+		return false;
 	}
 }

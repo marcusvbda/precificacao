@@ -1,11 +1,14 @@
 <template>
     <tr>
         <td colspan="2">
-            <div class="row mb-3" v-for="(row,i) in selected_options" :key="i" v-if="visible" v-loading="loading"
+            <div class="row mb-3" v-for="(row,i) in selected_options" :key="i" v-loading="loading"
                 element-loading-text="Carregando ...">
                 <div class="col-12">
-                    <h4 class='mb-3'>{{row.name}}</h4>
-                    <table class="table table-striped  table-sm">
+                    <h4 class='mb-2'>{{row.name}}</h4>
+                    <div class="mb-4" v-if="row.expenses.length <= 0">
+                        <small class="text-muted">Centro de custo sem despesas relacionadas</small>
+                    </div>
+                    <table v-else class="table table-striped table-sm mb-4">
                         <thead>
                             <tr>
                                 <th scope="col">Nome</th>
@@ -25,7 +28,8 @@
             </div>
             <div class="row mt-3">
                 <div class="col-md-6 col-sm-12">
-                    <VueApexCharts type="treemap" height="500" width="500" :options="chartOptions" :series="series" />
+                    <VueApexCharts type="treemap" v-if="visible" height="500" width="500" :options="chartOptions"
+                        :series="series" />
                 </div>
                 <div class="d-flex justify-content-start align-items-end col-md-6 col-sm-12 flex-column">
                     <h4><b class="mr-2">Preço calculado : </b>{{computed_price.currency()}}</h4>
@@ -45,8 +49,9 @@ export default {
             timeout: null,
             options: [],
             chartOptions: {
+                download: false,
                 legend: {
-                    show: false
+                    show: true
                 },
                 chart: {
                     type: 'treemap'
@@ -88,7 +93,7 @@ export default {
             return this.form?.expense_center_ids ? this.form.expense_center_ids : [];
         },
         visible() {
-            return this.expense_center_ids.length;
+            return this.expense_center_ids.length > 0;
         },
         margin_real_value() {
             if (this.form.margin_type == "fixed") {
